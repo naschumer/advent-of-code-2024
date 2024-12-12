@@ -20,12 +20,12 @@ public class Day11 : BaseDay
     public override ValueTask<string> Solve_1()
     {
         var puzzle = ParseInput();
-        var map = new Dictionary<ulong, ulong>();
-        var count = Blink(puzzle, map, 6);
+        var map = new Dictionary<(ulong, int), ulong>();
+        var count = Blink(puzzle, map, 75);
         return new(count.ToString());
     }
 
-    private ulong Blink(ulong[] puzzle, Dictionary<ulong, ulong> map, int v)
+    private ulong Blink(ulong[] puzzle, Dictionary<(ulong, int), ulong> map, int v)
     {
         ulong count = 0;
         if (v == 0)
@@ -36,57 +36,36 @@ public class Day11 : BaseDay
         {
             if (num == 0)
             {
-                if (!map.ContainsKey(1))
-                {
-                    var u = Blink([1], map, v - 1);
-                    count += u;
-                    if (!map.ContainsKey(1)) map.Add(1, u);
-                }
-                else
-                {
-                    count += map[1];
-                }
-
+                count += AddToMap(map, 1, v);
             }
             else if (num.ToString().Length % 2 == 0)
             {
                 var left = ulong.Parse(num.ToString().Substring(0, num.ToString().Length / 2));
                 var right = ulong.Parse(num.ToString().Substring(num.ToString().Length / 2));
-                if (!map.ContainsKey(left))
-                {
-                    var u = Blink([left], map, v - 1);
-                    count += u;
-                    if (!map.ContainsKey(left)) map.Add(left, u);
-                }
-                else
-                {
-                    count += map[left];
-                }
-                if (!map.ContainsKey(right))
-                {
-                    var u = Blink([right], map, v - 1);
-                    count += u;
-                    if (!map.ContainsKey(right)) map.Add(right, u);
-                }
-                else
-                {
-                    count += map[right];
-                }
+                count += AddToMap(map, left, v);
+                count += AddToMap(map, right, v);
             }
             else
             {
                 var newNum = num * 2024;
-                if (!map.ContainsKey(newNum))
-                {
-                    var u = Blink([newNum], map, v - 1);
-                    count += u;
-                    if (!map.ContainsKey(newNum)) map.Add(newNum, u);
-                }
-                else
-                {
-                    count += map[newNum];
-                }
+                count += AddToMap(map, newNum, v);
             }
+        }
+        return count;
+    }
+
+    private ulong AddToMap(Dictionary<(ulong, int), ulong> map, ulong x, int v)
+    {
+        ulong count = 0;
+        if (!map.ContainsKey((x, v)))
+        {
+            var u = Blink([x], map, v - 1);
+            count += u;
+            if (!map.ContainsKey((x, v))) map.Add((x, v), u);
+        }
+        else
+        {
+            count += map[(x, v)];
         }
         return count;
     }
