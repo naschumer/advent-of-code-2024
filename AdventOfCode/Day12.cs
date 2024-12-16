@@ -12,12 +12,12 @@ public class Day12 : BaseDay
         _input = File.ReadAllLines(InputFilePath);
     }
 
-    public List<Node> ParseInput()
+    public List<Node12> ParseInput()
     {
-        var a = new List<Node>();
+        var a = new List<Node12>();
         foreach (var (y, line) in _input.Index())
         {
-            a = a.Concat(line.Select((c, x) => new Node(x, y, c)).ToList()).ToList();
+            a = a.Concat(line.Select((c, x) => new Node12(x, y, c)).ToList()).ToList();
         }
         return a;
     }
@@ -50,9 +50,9 @@ public class Day12 : BaseDay
         return new(totalCount.ToString());
     }
 
-    private int GetSides(List<Node> puzzle, int group)
+    private int GetSides(List<Node12> puzzle, int group)
     {
-        var map = new Dictionary<(string, int), Node> ();
+        var map = new Dictionary<(string, int), Node12> ();
         foreach(var node in puzzle.Where(n => n.Group == group))
         {
 
@@ -60,7 +60,7 @@ public class Day12 : BaseDay
         return 0;
     }
 
-    private void Search(List<Node> puzzle, Node val, int currentGroup)
+    private void Search(List<Node12> puzzle, Node12 val, int currentGroup)
     {
         if (val.Group == null) val.Group = currentGroup;
         var right = puzzle.Where(n => n.X == val.X + 1 && n.Y == val.Y && n.Letter == val.Letter && n.Group == null).ToList();
@@ -94,7 +94,7 @@ public class Day12 : BaseDay
     }
 }
 
-public class Node
+public class Node12
 {
     public int X { get; set; }
     public int Y { get; set; }
@@ -102,7 +102,7 @@ public class Node
     public int? Perimeter { get; set; }
     public char Letter { get; set; }
 
-    public Node(int x, int y, char letter)
+    public Node12(int x, int y, char letter)
     {
         X = x; Y = y; Letter = letter;
     }
